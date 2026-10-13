@@ -1,3 +1,9 @@
+<script lang="ts">
+  // Module scope, shared by every PageShell: each view mounts its own, so a flag inside
+  // <script setup> would reset on every navigation and the announcement would never fire.
+  let hasNavigated = false
+</script>
+
 <script setup lang="ts">
   /**
    * 100dvh flex column on desktop (no page scroll), natural height on mobile.
@@ -19,8 +25,7 @@
   const isFetching = useIsFetching()
 
   // Route-change a11y (WCAG 4.1.3, 2.4.3): announce new page and focus <main>.
-  // Module-level flag skips initial document load; subsequent mounts fire announcement.
-  let hasNavigated = false
+  // The module-level flag skips the initial document load; later mounts announce.
   const routeAnnounce = ref('')
   onMounted(() => {
     if (hasNavigated) {
@@ -52,7 +57,9 @@
 <style scoped>
   .shell {
     position: relative;
-    height: 100dvh;
+    /* --ui-zoom scales 4K up; 100dvh is not zoomed, so divide it back out. */
+    zoom: var(--ui-zoom, 1);
+    height: calc(100dvh / var(--ui-zoom, 1));
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -114,11 +121,12 @@
     }
 
     .page {
-      padding: 12px 14px 24px;
+      padding: 12px 14px calc(24px + var(--bottomnav-h));
     }
 
+    /* Overview's map ends where the bottom tab bar starts. */
     .page.full-bleed {
-      padding: 0;
+      padding: 0 0 var(--bottomnav-h);
     }
   }
 </style>

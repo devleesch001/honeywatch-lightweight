@@ -56,6 +56,8 @@ class SessionSummaryDict(SessionBaseDict):
 
 class SessionDetailDict(SessionBaseDict):
     sensor: str | None
+    interest: int
+    max_interest: int
     auth_attempts: list[AuthAttemptDict]
     commands: list[CommandDict]
     downloads: list[DownloadDict]
@@ -68,6 +70,40 @@ class SessionsPageDict(TypedDict):
     per_page: int
     pages: int
     max_interest: int
+
+
+class RunDict(TypedDict):
+    count: int
+    offset: int
+    countries: int
+    country_code: str | None
+    country: str | None
+    min_duration_s: int | None
+    max_duration_s: int | None
+    oldest: datetime
+    newest: datetime
+
+
+class FoldedSessionDict(SessionSummaryDict):
+    run: RunDict | None
+
+
+class FoldedPageDict(TypedDict):
+    sessions: list[FoldedSessionDict]
+    total: int
+    page: int
+    per_page: int
+    pages: int
+    max_interest: int
+    as_of: datetime
+
+
+class RunMembersPageDict(TypedDict):
+    sessions: list[SessionSummaryDict]
+    total: int
+    page: int
+    per_page: int
+    pages: int
 
 
 class TopPasswordDict(TypedDict):
