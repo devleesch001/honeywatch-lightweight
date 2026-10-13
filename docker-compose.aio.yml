@@ -1,0 +1,53 @@
+# Dev stack, single-container variant: the `aio` image (API + dashboard +
+# migrations at start) replaces the api-migrate, api and dashboard services
+# of docker-compose.yml. Same volumes, so the two variants share their data.
+#
+# Usage: docker compose -f docker-compose.aio.yml up -d --build
+
+services:
+  cowrie:
+    extends:
+      file: docker-compose.yml
+      service: cowrie
+
+  postgres:
+    extends:
+      file: docker-compose.yml
+      service: postgres
+
+  ingestor:
+    extends:
+      file: docker-compose.yml
+      service: ingestor
+    depends_on: !override
+      # Healthy means migrated: the aio entrypoint migrates before serving.
+      aio:
+        condition: service_healthy
+
+  aio:
+    build:
+      context: .
+      dockerfile: aio/Dockerfile
+    container_name: honeywatch-aio
+    restart: unless-stopped
+    ports:
+      - "8080:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST: postgres
+      FLASK_SECRET_KEY: ${FLASK_SECRET_KEY}
+    networks:
+      - honeywatch
+
+volumes:
+  cowrie-logs:
+  postgres-data:
+
+networks:
+  honeywatch:
+    driver: bridge

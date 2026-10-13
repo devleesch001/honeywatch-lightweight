@@ -1,0 +1,28 @@
+# The aio image builds from the repository root but only needs api/,
+# dashboard/ and its own entrypoint.
+*
+!api
+!dashboard
+!aio/docker-entrypoint.sh
+
+**/.venv
+**/build
+**/*.egg-info
+**/__pycache__
+**/.pytest_cache
+**/.ruff_cache
+**/*.pyc
+**/.dockerignore
+**/Dockerfile
+**/*.gz
+**/*.log
+
+api/tests
+api/openapi.json
+
+dashboard/node_modules
+dashboard/dist
+dashboard/.vite
+dashboard/README.md
+dashboard/nginx.conf
+dashboard/security-headers.conf
