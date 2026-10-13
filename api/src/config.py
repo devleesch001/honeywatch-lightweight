@@ -66,6 +66,10 @@ class Config:
         f"@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}?sslmode={POSTGRES_SSLMODE}"
     )
 
+    # Directory holding the compiled dashboard; set by the combined image.
+    # Empty leaves the process API-only.
+    DASHBOARD_DIST = os.environ.get("DASHBOARD_DIST", "")
+
 
 class DevelopmentConfig(Config):
     pass

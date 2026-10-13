@@ -23,6 +23,7 @@ from src.openapi_cli import build_spec_dict, register_openapi_cli
 from src.request_id import init_request_id
 from src.routes import register_blueprints
 from src.security_headers import init_security_headers
+from src.spa import init_spa
 
 API_VERSION = "1.0.0"
 API_V1_PREFIX = "/api/v1"
@@ -120,6 +121,9 @@ def create_app(config: object | None = None) -> Flask:
     init_security_headers(app)
     init_error_handlers(app)
     register_blueprints(smorest_api)
+    dashboard_dist = cast(str, app.config.get("DASHBOARD_DIST") or "")  # pyright: ignore[reportUnknownMemberType]
+    if dashboard_dist:
+        init_spa(app, dashboard_dist)
     _install_openapi_cache(app, smorest_api)
     register_openapi_cli(app, smorest_api)
 
