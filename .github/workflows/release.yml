@@ -46,7 +46,7 @@ jobs:
       packages: write
     strategy:
       matrix:
-        component: [api, ingestor, dashboard]
+        component: [api, ingestor, dashboard, aio]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -81,7 +81,9 @@ jobs:
         id: build
         uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc
         with:
-          context: ./${{ matrix.component }}
+          # aio builds from the repo root: it needs both api/ and dashboard/.
+          context: ${{ matrix.component == 'aio' && '.' || format('./{0}', matrix.component) }}
+          file: ./${{ matrix.component }}/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -113,7 +115,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        component: [api, ingestor, dashboard]
+        component: [api, ingestor, dashboard, aio]
     permissions:
       contents: read
       packages: write

@@ -53,7 +53,7 @@ updates:
           - patch
 
   - package-ecosystem: docker
-    directories: ["/api", "/ingestor", "/dashboard"]
+    directories: ["/api", "/ingestor", "/dashboard", "/aio"]
     schedule:
       interval: weekly
       day: monday
